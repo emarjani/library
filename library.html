@@ -8,6 +8,11 @@
 
     <body>
         <h1>Library</h1>
+        <ul> 
+            <p>Save to:</p>
+            <li><button id="local-storage">Local Storage</li>
+            <li>other button option for storage? </li>
+        </ul>
 
         <form id="form">
             <label for="title">Title: </label><br>
@@ -22,7 +27,7 @@
             <label for="has-read">Read?</label><br>
             <input type="checkbox" id="has-read" name="hasread" value="yes"><br>
 
-            <button id="submit">Create Book</button>
+            <button id="submit" onclick="return false">Create Book</button>
 
             <!-- <input id="submit" type="submit" value="Add Text"/> -->
         </form>
