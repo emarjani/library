@@ -41,12 +41,9 @@ bookshelf.addEventListener("click", function(e) {
       index = grabIndex(e.target.id);
       readBook(index);
   }
+  saveLocalStorage();
   drawBookshelf(myLibrary);
 })
-
-//draw library when webpage first loaded
-drawBookshelf(myLibrary);
-console.log(myLibrary);
 
 //Event listener to add book to library
 submit.addEventListener("click", function () {
@@ -56,13 +53,14 @@ submit.addEventListener("click", function () {
   let pages = document.getElementById("pages").value;
   let hasread = (document.getElementById("has-read").checked)? "yes" : "no";
 
-  //check if form variables are blank
+  //checks if form variables are blank
   if (![title, author, pages].includes("")) {
     let latestBook = new Book(title, author, pages, hasread);
     resetForm();
     addBook(latestBook);
   }
   console.log(myLibrary);
+  saveLocalStorage();
   drawBookshelf(myLibrary);
 })
 
@@ -79,10 +77,9 @@ function getButtonName (string) {
 //action methods
 
 function resetForm() {
-  //reset form after every successfully created book
-  let input_defaults = {"title": "", "author": "", "pages": ""}
-  for (let key in input_defaults) {
-    document.getElementById(key).value = input_defaults[key];
+  let input_defaults = ["title", "author", "pages"];
+  for (let i=0; i < input_defaults.length; i++) {
+    document.getElementById(input_defaults[i]).value = "";
   }
   document.getElementById("has-read").checked = false;
 }
@@ -95,18 +92,15 @@ function addBook(book) {
   myLibrary.push(book);
 }
 
-// might need to be function
 function readBook(index) {
   myLibrary[index].read();
 }
 
 function clearBookshelf(bookshelf) {
-  while (bookshelf.firstChild) {
-    bookshelf.removeChild(bookshelf.firstChild);
-  }
+  bookshelf.innerHTML = "";
 }
 
-function drawBookshelf(library) {
+function drawBookshelf(library = myLibrary) {
   if (library) {
     clearBookshelf(bookshelf);
     console.log(library);
@@ -128,3 +122,40 @@ function drawBookshelf(library) {
 
 
 //Saving to Local Storage
+
+document.getElementById("reset-db").addEventListener("click", function() {
+  localStorage.clear();
+  // console.log(myLibrary);
+  // console.log(localStorage);
+  myLibrary = [];
+  //draw function for some reason not working
+  drawBookshelf(myLibrary);
+})
+
+
+function saveLocalStorage() {
+  localStorage.setItem("library", JSON.stringify(myLibrary));
+  // console.log(localStorage);
+}
+
+function loadLocalStorage() {
+  let library = [];
+  let db = JSON.parse(localStorage.getItem("library"));
+  //recreate array of book objects from JSON string in localStorage
+  if (db) {
+    for (let i=0; i < db.length; i++) {
+      library.push(new Book(db[i]["title"], db[i]["author"], db[i]["pages"], db[i]["hasread"]));
+    }
+  }
+  return library;
+}
+
+//then provide reset button for storing localstorage/firebase
+
+//set and draw library when webpage first loaded
+//BY DEFAULT save to local storage, option to switch to firebase?
+
+myLibrary = loadLocalStorage();
+drawBookshelf(myLibrary);
+console.log(myLibrary);
+
