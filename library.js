@@ -54,7 +54,7 @@ submit.addEventListener("click", function () {
   let hasread = (document.getElementById("has-read").checked)? "yes" : "no";
 
   //checks if form variables are blank (if not, create new book)
-  if (![title, author, pages].includes("")) {
+  if (![title, author, pages].includes("") && pages > 0) {
     let latestBook = new Book(title, author, pages, hasread);
     addBook(latestBook);
     resetForm();
