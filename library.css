@@ -16,6 +16,8 @@ h1 {
 
 .subheader {text-align: center;}
 
+button {outline: 0;}
+
 /* Buttons styling */
 
 #reset-db {
@@ -43,7 +45,6 @@ h1 {
 
     background-color: rgb(37, 179, 44);
     border:none;
-    outline: 0;
 
     font-size: 45px;
     color: white;
@@ -63,7 +64,7 @@ h1 {
     grid-template-columns: repeat(4, 1fr);
     grid-gap: 1.5rem;
     padding: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2.5rem;
 }
 
 article {
@@ -133,13 +134,17 @@ input[type=checkbox] {
     border: none;
     border-radius: 5px;
     color: white;
+    font-size: 18px;
     font-weight: 600;
     background-color: rgb(72, 169, 214);
-    outline: 0;
 }
 
 #submit:hover {
-    background-color: rgb(112, 182, 214);
+    background-color: rgb(100, 173, 207);
+}
+
+#submit:active {
+    box-shadow: 2px 2px 5px rgb(65, 65, 65);
 }
 
 /* book styling */
@@ -154,7 +159,10 @@ input[type=checkbox] {
     transform: scale(1.03, 1.03);
 }
 
-.author {font-size: 22px;}
+.author {
+    font-size: 22px;
+    color:#52281b;
+}
 
 .buttons {
     display: flex;
@@ -169,7 +177,7 @@ input[type=checkbox] {
     min-width: 30px;
 
     color: white;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 800;
 }
 
@@ -200,7 +208,7 @@ footer {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color:#86412c;
+    background-color:#5e3022;
     padding: 0.5em;
 }
 
@@ -215,7 +223,7 @@ footer p {
 }
 
 #github-link:hover {
-    color:#52281b;
+    color: #975e4c;
 }
 
 
