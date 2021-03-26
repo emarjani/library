@@ -22,10 +22,6 @@ Book.prototype.read = function () {
 const bookshelf = document.getElementById("bookshelf");
 const submit = document.getElementById("submit");
 
-//if storage is local storage/firebase etc.
-let storage = "";
-
-
 //makes sure each newly generated book has event listener attached.
 bookshelf.addEventListener("click", function(e) {
 
@@ -56,10 +52,12 @@ submit.addEventListener("click", function () {
   //checks if form variables are blank
   if (![title, author, pages].includes("")) {
     let latestBook = new Book(title, author, pages, hasread);
-    resetForm();
     addBook(latestBook);
+    resetForm();
+    closeForm();
   }
   console.log(myLibrary);
+  //maybe only save if book successfully created?
   saveLocalStorage();
   drawBookshelf(myLibrary);
 })
@@ -103,17 +101,20 @@ function clearBookshelf(bookshelf) {
 function drawBookshelf(library = myLibrary) {
   if (library) {
     clearBookshelf(bookshelf);
-    console.log(library);
+    // console.log(library);
     for (let i=0; i < library.length; i++) {
       //the indexes (id) of books will change with every book added and deleted, to correspond correctly with the index of the list (myLibrary)
       let book = document.createElement("article");
       book.insertAdjacentHTML("afterbegin", `
-      <p class='title'>${library[i].title}</p>
+      <a class='title' target='_blank' href='http://www.google.com/search?q=${library[i].title}+by+${library[i].author}+book'>${library[i].title}</a>
       <p class='author'>By: ${library[i].author}</p>
       <p class='pages'>No. of pages: ${library[i].pages}</p>
       <p class='hasread'>Read?: ${library[i].hasread}</p>
-      <button id="delete-${i}" class="delete" type="button">Delete</button>
-      <button id="read-${i}" class="read" type="button">Read</button>
+
+      <div class="buttons">
+        <button id="delete-${i}" class="delete" type="button">X</button>
+        <button id="read-${i}" class="read" type="button">Read</button>
+      </div>
       `);
       bookshelf.appendChild(book);
     }
@@ -150,12 +151,33 @@ function loadLocalStorage() {
   return library;
 }
 
-//then provide reset button for storing localstorage/firebase
+//funcion for popup open and close form
+
+document.getElementById("open-form").addEventListener("click", function(){
+  openForm();
+})
+
+//if click mask, close form (and mask)
+
+document.getElementById("mask").addEventListener("click", function() {
+  closeForm();
+})
+
+
+function openForm() {
+  document.getElementById("form").style.display = "block";
+  document.getElementById("mask").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("form").style.display = "none";
+  document.getElementById("mask").style.display = "none";
+}
+
 
 //set and draw library when webpage first loaded
-//BY DEFAULT save to local storage, option to switch to firebase?
 
 myLibrary = loadLocalStorage();
 drawBookshelf(myLibrary);
-console.log(myLibrary);
+
 

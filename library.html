@@ -2,40 +2,54 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <link rel="stylesheet" href="reset.css">
         <link rel="stylesheet" href="library.css">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
         <title>Library</title>
     </head>
 
     <body>
         <h1>Library</h1>
-        <ul> 
-            <p>Save to:</p>
-            <li><button id="local-storage">Local Storage</li>
-            <li>other button option for storage? </li>
-            <li><button id="reset-db">Reset</button></li>
-        </ul>
+        <p class="subheader">(Don't fret, your books are automatically saved locally!)</p>
+        
+        <button id="reset-db"></button>
+        <button id="open-form">+</button>
+        <div id="mask"></div>
 
         <form id="form">
-            <label for="title">Title: </label><br>
-            <input id="title" name="title" type="text"><br>
+            <div id="form-container">
+                <div class="text-field-1">
+                    <label for="title">Title: </label>
+                    <input id="title" name="title" type="text">
+                </div>
 
-            <label for="author">Author: </label><br>
-            <input id="author" name="author" type="text"><br>
+                <div class="text-field-2">
+                    <label for="author">Author: </label>
+                    <input id="author" name="author" type="text">
+                </div>
 
-            <label for="pages">Number of Pages: </label><br>
-            <input id="pages" name="pages" type="number"><br>
+                <div class="number-container">
+                    <label for="pages">Number of Pages: </label>
+                    <input id="pages" name="pages" type="number">
+                </div>
 
-            <label for="has-read">Read?</label><br>
-            <input type="checkbox" id="has-read" name="hasread" value="yes"><br>
+                <div class="checkbox-field">
+                    <label for="has-read">Read?</label>
+                    <input type="checkbox" id="has-read" name="hasread" value="yes">
+                </div>
 
-            <button id="submit" onclick="return false">Create Book</button>
-
-            <!-- <input id="submit" type="submit" value="Add Text"/> -->
+                <button id="submit" onclick="return false">Create Book</button>
+            </div>
         </form>
 
         <div id="bookshelf">
         </div>
 
         <script type="text/javascript" src="library.js"></script>
+
+        <footer>
+            <p>A project by <a id="github-link" href="https://github.com/emarjani" target="_blank">@emarjani</a></p>
+        </footer>
     </body>
 </html>
