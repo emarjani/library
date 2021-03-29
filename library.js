@@ -1,5 +1,3 @@
-let myLibrary = [];
-
 function Book(title, author, pages, hasread) {
     this.title = title;
     this.author = author; 
@@ -28,18 +26,22 @@ const default_library = [
   new Book("The Great Gatsby", "F. Scott Fitzgerald", 288, "no")
 ];
 
+
+let myLibrary = loadLocalStorage();
+
 //makes sure each newly generated book has event listener attached.
 bookshelf.addEventListener("click", function(e) {
+  let library = lib(myLibrary);
 
+  let id = e.target.id;
   //delete button
-  if (e.target && getButtonName(e.target.id) == "delete" ) {
-    index = grabIndex(e.target.id);
-    deleteBook(index);
+  if (e.target && ID.name(id) == "delete" ) {
+    library.remove(ID.index(id));
+    
   } 
   //read button
-  else if (e.target && getButtonName(e.target.id) == "read" ) {
-      index = grabIndex(e.target.id);
-      readBook(index);
+  else if (e.target && ID.name(id) == "read" ) {
+    library.read(ID.index(id));
   }
   saveLocalStorage();
   drawBookshelf(myLibrary);
@@ -48,6 +50,9 @@ bookshelf.addEventListener("click", function(e) {
 //Event listener to add book to library
 submit.addEventListener("click", function () {
   //there will be new values every time, hence need to be set in this func
+  //lib needs to be given new copy of myLibrary each time.
+  let library = lib(myLibrary);
+
   let title = document.getElementById("title").value;
   let author = document.getElementById("author").value;
   let pages = document.getElementById("pages").value;
@@ -56,36 +61,32 @@ submit.addEventListener("click", function () {
   //checks if form variables are blank (if not, create new book)
   if (![title, author, pages].includes("") && pages > 0) {
     let latestBook = new Book(title, author, pages, hasread);
-    addBook(latestBook);
-    resetForm();
-    closeForm();
+    library.add(latestBook);
+    form.reset();
+    form.close();
     saveLocalStorage();
   }
   drawBookshelf(myLibrary);
 })
 
-//Methods (Book/Bookshelf)
+//Methods (ID/Library/Bookshelf)
 
-function grabIndex(string) {
-  return string.split("-")[1];
+//module to parse id (html id format = "name-index")
+const ID = (() => {
+  const name = (string) => string.split("-")[0];
+  const index = (string) => string.split("-")[1];
+  return {name, index};
+})();
+
+//Modify books in library
+const lib = library => {
+  const remove = (index) => library.splice(index, 1);
+  const add = (book) => library.push(book);
+  const read = (index) => {library[index].read();};
+  return {remove, add, read}
 }
 
-function getButtonName (string) {
-  return string.split("-")[0];
-}
-
-function deleteBook(index) {
-  myLibrary.splice(index, 1);  
-}
-
-function addBook(book) {
-  myLibrary.push(book);
-}
-
-function readBook(index) {
-  myLibrary[index].read();
-}
-
+//Drawing functions
 function clearBookshelf(bookshelf) {
   bookshelf.innerHTML = "";
 }
@@ -112,67 +113,67 @@ function drawBookshelf(library = myLibrary) {
   }
 }
 
-
 //Saving to Local Storage
 
-document.getElementById("reset-db").addEventListener("click", function() {
-  localStorage.clear();
-  myLibrary = [];
-  drawBookshelf(myLibrary);
-})
-
-
-function saveLocalStorage() {
-  localStorage.setItem("library", JSON.stringify(myLibrary));
+//Will auto save if you: create a book, delete a book or read a book.
+function saveLocalStorage(lib = myLibrary) {
+  localStorage.setItem("library", JSON.stringify(lib));
 }
 
 function loadLocalStorage() {
+  //when page first loaded, check if local storage exists. if not, create local storage, and populate with default values.
   let library = [];
-  let db = JSON.parse(localStorage.getItem("library"));
-  //recreate array of book objects from JSON string in localStorage
-  if (db) {
+
+  if (localStorage.getItem("library")) {
+    let db = JSON.parse(localStorage.getItem("library"));
     for (let i=0; i < db.length; i++) {
       library.push(new Book(db[i]["title"], db[i]["author"], db[i]["pages"], db[i]["hasread"]));
     }
   } else {
+    //will run when website first initialized, to setup localstorage, or if library is reset (local storage as a whole will be deleted)
     library = default_library;
+    saveLocalStorage(library);
   }
   return library;
 }
 
-//Form
+//Form Event listeners
 
 document.getElementById("open-form").addEventListener("click", function(){
-  openForm();
+  form.open();
 })
 
 document.getElementById("mask").addEventListener("click", function() {
-  closeForm();
+  form.close();
 })
 
-function resetForm() {
-  let input_defaults = ["title", "author", "pages"];
-  for (let i=0; i < input_defaults.length; i++) {
-    document.getElementById(input_defaults[i]).value = "";
+document.getElementById("reset-db").addEventListener("click", function() {
+  myLibrary = [];
+  localStorage.clear();
+  drawBookshelf(myLibrary);
+})
+
+//Form methods
+const form = (() => {
+  const toggle = (type) => {
+    document.getElementById("form").style.display = type;
+    document.getElementById("mask").style.display = type;
   }
-  document.getElementById("has-read").checked = false;
-}
+  const open = () => toggle("block");
+  const close = () => toggle("none");
 
+  const reset = () => {
+    let input_defaults = ["title", "author", "pages"];
+    for (let i=0; i < input_defaults.length; i++) {
+      document.getElementById(input_defaults[i]).value = "";
+    }
+    document.getElementById("has-read").checked = false;
+  };
+  return {open, close, reset};
+})(); 
 
-function openForm() {
-  document.getElementById("form").style.display = "block";
-  document.getElementById("mask").style.display = "block";
-}
+//Draw bookshelf upon initial loading of page
 
-function closeForm() {
-  document.getElementById("form").style.display = "none";
-  document.getElementById("mask").style.display = "none";
-}
-
-
-//setup and draw library when webpage is first loaded
-
-myLibrary = loadLocalStorage();
 drawBookshelf(myLibrary);
 
 
